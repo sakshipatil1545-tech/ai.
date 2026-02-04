@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sales SaaS - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gray: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827',
+                            950: '#030712'
+                        },
+                        // Enhanced Glass morphism colors for dark theme
+                        glass: {
+                            white: 'rgba(255, 255, 255, 0.12)',
+                            dark: 'rgba(15, 23, 42, 0.85)',
+                            card: 'rgba(255, 255, 255, 0.1)',
+                            sidebar: 'rgba(255, 255, 255, 0.08)',
+                            modal: 'rgba(17, 24, 39, 0.95)',
+                            nav: 'rgba(17, 24, 39, 0.85)',
+                            button: 'rgba(255, 255, 255, 0.18)',
+                            input: 'rgba(255, 255, 255, 0.12)',
+                            hover: 'rgba(255, 255, 255, 0.2)',
+                            glow: 'rgba(59, 130, 246, 0.15)',
+                            glowGreen: 'rgba(16, 185, 129, 0.15)',
+                            glowPurple: 'rgba(139, 92, 246, 0.15)',
+                            glowPink: 'rgba(236, 72, 153, 0.15)',
+                            glowOrange: 'rgba(245, 158, 11, 0.15)'
+                        }
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                        'sm': '8px',
+                        'md': '12px',
+                        'lg': '20px',
+                        'xl': '40px'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'progress': 'progress 2s ease-out',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s infinite',
+                        'gradient-flow': 'gradientFlow 4s ease infinite'
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        progress: {
+                            '0%': { width: '0%' },
+                            '100%': { width: 'var(--progress)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateX(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)' },
+                            '50%': { boxShadow: '0 0 40px rgba(59, 130, 246, 0.5)' }
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-500px 0' },
+                            '100%': { backgroundPosition: '500px 0' }
+                        },
+                        gradientFlow: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .page-transition {
+            animation: fadeIn 0.5s ease-out;
+        }
+        .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .progress-bar {
+            --progress: 75%;
+            animation: progress 1.5s ease-out;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .active-status {
+            background-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+        }
+        .paused-status {
+            background-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+        }
+        .draft-status {
+            background-color: #6b7280;
+            box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.3);
+        }
+        .hidden-page {
+            display: none;
+        }
+        .active-page {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .call-card {
+            animation: slideIn 0.3s ease-out;
+        }
+        .pulse-ring {
+            animation: pulse 2s infinite;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        /* Enhanced Glass Morphism Effects for Dark Theme */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        
+        .glass-nav {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(17, 24, 39, 0.8) 100%);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .glass-sidebar {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .glass-modal {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.97) 0%, rgba(17, 24, 39, 0.95) 100%);
+            backdrop-filter: blur(25px) saturate(200%);
+            -webkit-backdrop-filter: blur(25px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-button {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.15) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glass-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .glass-button:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.2) 100%);
+            border-color: rgba(255, 255, 255, 0.35);
+            transform: translateY(-1px);
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.2),
+                0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .glass-button:hover::before {
+            left: 100%;
+        }
+        
+        .glass-input {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 0 0 3px rgba(59, 130, 246, 0.4),
+                0 0 20px rgba(59, 130, 246, 0.2);
+            outline: none;
+            border-color: rgba(59, 130, 246, 0.6);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Enhanced text colors for dark theme */
+        .text-gray-900 {
+            color: #ffffff !important;
+        }
+        
+        .text-gray-800 {
+            color: rgba(255, 255, 255, 0.95) !important;
+        }
+        
+        .text-gray-700 {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        
+        .text-gray-600 {
+            color: rgba(255, 255, 255, 0.75) !important;
+        }
+        
+        .text-gray-500 {
+            color: rgba(255, 255, 255, 0.65) !important;
+        }
+        
+        .text-gray-400 {
+            color: rgba(255, 255, 255, 0.55) !important;
+        }
+        
+        .bg-gray-50 {
+            background: rgba(255, 255, 255, 0.08) !important;
+        }
+        
+        .bg-gray-100 {
+            background: rgba(255, 255, 255, 0.12) !important;
+        }
+        
+        .bg-gray-200 {
+            background: rgba(255, 255, 255, 0.18) !important;
+        }
+        
+        /* Enhanced light colors for cards with glass effects */
+        .bg-green-50 { 
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%) !important;
+            border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        }
+        .bg-blue-50 { 
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.08) 100%) !important;
+            border: 1px solid rgba(59, 130, 246, 0.2) !important;
+        }
+        .bg-purple-50 { 
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+            border: 1px solid rgba(139, 92, 246, 0.2) !important;
+        }
+        .bg-orange-50 { 
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.08) 100%) !important;
+            border: 1px solid rgba(245, 158, 11, 0.2) !important;
+        }
+        .bg-pink-50 { 
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(236, 72, 153, 0.08) 100%) !important;
+            border: 1px solid rgba(236, 72, 153, 0.2) !important;
+        }
+        .bg-indigo-50 { 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0.08) 100%) !important;
+            border: 1px solid rgba(99, 102, 241, 0.2) !important;
+        }
+        .bg-teal-50 { 
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(20, 184, 166, 0.08) 100%) !important;
+            border: 1px solid rgba(20, 184, 166, 0.2) !important;
+        }
+        .bg-yellow-50 { 
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.08) 100%) !important;
+            border: 1px solid rgba(245, 158, 11, 0.2) !important;
+        }
+        .bg-red-50 { 
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.08) 100%) !important;
+            border: 1px solid rgba(239, 68, 68, 0.2) !important;
+        }
+        
+        /* Enhanced border colors */
+        .border-gray-200 {
+            border-color: rgba(255, 255, 255, 0.15) !important;
+        }
+        
+        .border-gray-300 {
+            border-color: rgba(255, 255, 255, 0.25) !important;
+        }
+        
+        /* Custom border colors for calls */
+        .border-green-100 { 
+            border-color: rgba(16, 185, 129, 0.4) !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+        .border-blue-100 { 
+            border-color: rgba(59, 130, 246, 0.4) !important;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+        .border-purple-100 { 
+            border-color: rgba(139, 92, 246, 0.4) !important;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+        .border-indigo-100 { 
+            border-color: rgba(99, 102, 241, 0.4) !important;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+        .border-pink-100 { 
+            border-color: rgba(236, 72, 153, 0.4) !important;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.2);
+        }
+        .border-teal-100 { 
+            border-color: rgba(20, 184, 166, 0.4) !important;
+            box-shadow: 0 0 15px rgba(20, 184, 166, 0.2);
+        }
+        
+        /* Table row hover */
+        .hover\:bg-gray-50:hover {
+            background: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        /* Enhanced Robot Logo Styling */
+        .robot-logo {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .robot-head {
+            width: 22px;
+            height: 22px;
+            background: #0f172a;
+            border-radius: 6px;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .robot-eye {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            border-radius: 50%;
+            top: 5px;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+        }
+
+        .robot-eye-left {
+            left: 4px;
+        }
+
+        .robot-eye-right {
+            right: 4px;
+        }
+
+        .robot-mouth {
+            position: absolute;
+            width: 12px;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 2px;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Enhanced Profile Logo Styling */
+        .profile-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 18px;
+            box-shadow: 
+                0 4px 20px rgba(59, 130, 246, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Enhanced form elements */
+        input[type="checkbox"] {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        input[type="checkbox"]:checked {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-color: rgba(59, 130, 246, 0.6);
+        }
+        
+        select {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        option {
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        /* Enhanced status badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid;
+        }
+        
+        .status-success {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+        
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.4);
+            color: #f59e0b;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+        }
+        
+        .status-error {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+        }
+        
+        .status-info {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+            color: #3b82f6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Enhanced progress bars */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 8px;
+        }
+        
+        .progress-bar-inner {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-content {
+                padding-bottom: 80px;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .campaign-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+            
+            .glass-card {
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .glass-card {
+                padding: 1rem;
+            }
+            
+            .text-2xl {
+                font-size: 1.5rem;
+            }
+            
+            .text-3xl {
+                font-size: 1.75rem;
+            }
+        }
+        
+        /* Enhanced gradient backgrounds */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #ffd166 100%);
+            background-size: 400% 400%;
+            animation: gradient-flow 4s ease infinite;
+        }
+        
+        /* Glass card hover effects */
+        .glass-card-hover {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glass-card-hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+        
+        .glass-card-hover:hover::before {
+            left: 100%;
+        }
+        
+        /* Enhanced scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <!-- Enhanced Background decorative elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-10 left-10 w-80 h-80 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-20 floating-element"></div>
+        <div class="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-20 floating-element" style="animation-delay: -3s;"></div>
+        <div class="absolute top-1/2 left-1/3 w-80 h-80 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-20 floating-element" style="animation-delay: -6s;"></div>
+        <div class="absolute top-1/3 right-1/4 w-60 h-60 bg-gradient-to-r from-green-600/20 to-teal-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-15 floating-element" style="animation-delay: -9s;"></div>
+        <div class="absolute bottom-1/3 left-1/4 w-60 h-60 bg-gradient-to-r from-orange-600/20 to-red-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-15 floating-element" style="animation-delay: -12s;"></div>
+        
+        <!-- Animated gradient mesh -->
+        <div class="absolute inset-0" style="
+            background-image: 
+                radial-gradient(at 40% 20%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 80% 50%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.1) 0px, transparent 50%),
+                radial-gradient(at 80% 100%, rgba(239, 68, 68, 0.1) 0px, transparent 50%);
+        "></div>
+    </div>
+
+    <!-- =========================================== -->
+    <!-- LOGIN PAGE (First Page - Default) -->
+    <!-- =========================================== -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center p-4 page-transition relative">
+        <!-- Enhanced Background Blur Layer -->
+        <div class="absolute inset-0 backdrop-blur-xl" style="background: rgba(15, 23, 42, 0.7)"></div>
+        
+        <div class="w-full max-w-md relative z-10">
+            <!-- Enhanced Login Card -->
+            <div class="glass-card rounded-2xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 glass-card-hover">
+                <!-- Logo -->
+                <div class="flex flex-col items-center mb-8">
+                    <div class="robot-logo mb-4 transform hover:scale-105 transition-transform duration-300">
+                        <div class="robot-head">
+                            <div class="robot-eye robot-eye-left"></div>
+                            <div class="robot-eye robot-eye-right"></div>
+                            <div class="robot-mouth"></div>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white">SalesForce AI</h1>
+                    <p class="text-gray-400 mt-2">Intelligent Sales Automation Platform</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                        <input type="email" 
+                               id="email"
+                               required
+                               class="w-full px-4 py-3 glass-input rounded-lg focus:outline-none transition-all duration-300"
+                               placeholder="Enter your email">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                        <input type="password" 
+                               id="password"
+                               required
+                               class="w-full px-4 py-3 glass-input rounded-lg focus:outline-none transition-all duration-300"
+                               placeholder="Enter your password">
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember" class="h-4 w-4 rounded glass-input">
+                            <label for="remember" class="ml-2 text-sm text-gray-300">Remember me</label>
+                        </div>
+                        <a href="#" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full glass-button py-3 rounded-lg font-medium text-white transition-all duration-300 transform hover:-translate-y-0.5">
+                        Sign In
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-gray-400 text-sm">
+                            Demo Credentials:<br>
+                            Email: admin@example.com<br>
+                            Password: password123
+                        </p>
+                    </div>
+                </form>
+
+                <div class="mt-6 pt-6 border-t border-gray-700">
+                    <p class="text-center text-gray-400 text-sm">
+                        Don't have an account? 
+                        <a href="#" class="text-blue-400 hover:text-blue-300 font-medium transition-colors">Contact Sales</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Enhanced Features List -->
+            <div class="glass-card rounded-2xl p-6 mt-6 hover:shadow-3xl transition-all duration-300 glass-card-hover">
+                <h3 class="font-bold text-white mb-4 text-center">Why Choose SalesForce AI?</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.3)">
+                            <i class="fas fa-robot text-blue-400"></i>
+                        </div>
+                        <span class="text-gray-300">AI-Powered Sales Agents</span>
+                    </div>
+                    <div class="flex items-center p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.3)">
+                            <i class="fas fa-chart-line text-green-400"></i>
+                        </div>
+                        <span class="text-gray-300">Real-time Analytics Dashboard</span>
+                    </div>
+                    <div class="flex items-center p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3)">
+                            <i class="fas fa-phone-alt text-purple-400"></i>
+                        </div>
+                        <span class="text-gray-300">Automated Call Campaigns</span>
+                    </div>
+                    <div class="flex items-center p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.3)">
+                            <i class="fas fa-shield-alt text-orange-400"></i>
+                        </div>
+                        <span class="text-gray-300">Enterprise-grade Security</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================== -->
+    <!-- MAIN APPLICATION (Hidden until login) -->
+    <!-- =========================================== -->
+    <div id="main-app" class="hidden">
+        <!-- Enhanced Navigation -->
+        <nav class="glass-nav px-4 py-3 relative">
+            <div class="flex items-center justify-between w-full mx-auto">
+                <!-- Logo with Robot -->
+                <div class="flex items-center space-x-3">
+                    <div class="robot-logo transform hover:scale-105 transition-transform duration-300">
+                        <div class="robot-head">
+                            <div class="robot-eye robot-eye-left"></div>
+                            <div class="robot-eye robot-eye-right"></div>
+                            <div class="robot-mouth"></div>
+                        </div>
+                    </div>
+                    <span class="text-xl font-bold text-white">SalesForce</span>
+                </div>
+
+                <!-- Search & User -->
+                <div class="flex items-center space-x-4">
+                    <!-- Enhanced Logout Button -->
+                    <button onclick="logout()" class="hidden md:flex items-center space-x-2 px-4 py-2 glass-button rounded-lg text-sm transform hover:-translate-y-0.5 transition-all duration-300">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                    
+                    <!-- Enhanced User Profile with Logout -->
+                    <div class="flex items-center space-x-3">
+                        <div class="relative group">
+                            <div class="flex items-center space-x-2 cursor-pointer" onclick="toggleUserMenu()">
+                                <div class="profile-logo transform hover:scale-105 transition-transform duration-300">
+                                    <span>RK</span>
+                                </div>
+                                <span class="hidden md:block text-white">Rajesh Kumar</span>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300 group-hover:rotate-180"></i>
+                            </div>
+                            <!-- Enhanced Dropdown Menu -->
+                            <div id="userMenu" class="absolute right-0 mt-2 w-56 glass-card rounded-lg shadow-2xl hidden z-50 border border-gray-700">
+                                <div class="p-4 border-b border-gray-700">
+                                    <p class="font-semibold text-white">Rajesh Kumar</p>
+                                    <p class="text-sm text-gray-400 mt-1">admin@example.com</p>
+                                </div>
+                                <div class="p-2">
+                                    <a href="#" class="flex items-center px-3 py-2.5 text-gray-300 hover:bg-white/10 rounded-lg transition-all duration-300">
+                                        <i class="fas fa-user mr-3"></i> Profile
+                                    </a>
+                                    <a href="#" class="flex items-center px-3 py-2.5 text-gray-300 hover:bg-white/10 rounded-lg transition-all duration-300">
+                                        <i class="fas fa-cog mr-3"></i> Settings
+                                    </a>
+                                    <a href="#" onclick="logout()" class="flex items-center px-3 py-2.5 text-red-400 hover:bg-white/10 rounded-lg transition-all duration-300">
+                                        <i class="fas fa-sign-out-alt mr-3"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="flex w-full mx-auto relative main-content">
+            <!-- Enhanced Sidebar -->
+            <aside class="hidden md:block w-64 glass-sidebar min-h-screen">
+                <nav class="p-4">
+                    <div class="mb-8">
+                        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-2">Main</h2>
+                        <ul class="space-y-1">
+                            <li>
+                                <a href="#" onclick="showPage('campaigns')" class="sidebar-link active flex items-center space-x-3 px-3 py-3 rounded-lg text-white transition-all duration-300">
+                                    <i class="fas fa-bullhorn w-5"></i>
+                                    <span>Campaigns</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="showPage('live-calls')" class="sidebar-link flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-300 transition-all duration-300 hover:bg-white/10">
+                                    <i class="fas fa-phone-alt w-5"></i>
+                                    <span>Live Calls</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-2">Quick Actions</h2>
+                        <ul class="space-y-2">
+                            <li>
+                                <button onclick="showCampaignModal()" class="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-lg glass-button text-white transform hover:-translate-y-0.5 transition-all duration-300">
+                                    <i class="fas fa-plus"></i>
+                                    <span>New Campaign</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 p-4 w-full">
+                <!-- Campaigns Page (Default) - Enhanced -->
+                <div id="campaigns-page" class="active-page page-transition">
+                    <div class="p-4 md:p-6">
+                        <!-- Header Section -->
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
+                            <div class="mb-4 md:mb-0">
+                                <h1 class="text-2xl font-bold text-white">Campaigns</h1>
+                                <p class="text-gray-400">Manage your AI sales campaigns</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <!-- Mobile Logout Button -->
+                                <button onclick="logout()" class="md:hidden flex items-center space-x-2 px-3 py-2 glass-button rounded-lg text-sm transform hover:-translate-y-0.5 transition-all duration-300">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </button>
+                                
+                                <div class="relative">
+                                    <input type="text" 
+                                           placeholder="Search campaigns..." 
+                                           class="pl-10 pr-4 py-2 glass-input rounded-lg focus:outline-none transition-all duration-300">
+                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                </div>
+                                <button onclick="showCampaignModal()" class="glass-button px-4 py-2 rounded-lg flex items-center space-x-2 transform hover:-translate-y-0.5 transition-all duration-300">
+                                    <i class="fas fa-plus"></i>
+                                    <span>New Campaign</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Stats Overview -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="glass-card p-4 rounded-xl hover:shadow-2xl transition-all duration-300 glass-card-hover">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-400">Active Campaigns</p>
+                                        <p class="text-2xl font-bold text-white">3</p>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(16, 185, 129, 0.15) 100%); border: 1px solid rgba(16, 185, 129, 0.4)">
+                                        <i class="fas fa-play text-green-400 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="glass-card p-4 rounded-xl hover:shadow-2xl transition-all duration-300 glass-card-hover">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-400">Total Leads</p>
+                                        <p class="text-2xl font-bold text-white">1,842</p>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%); border: 1px solid rgba(59, 130, 246, 0.4)">
+                                        <i class="fas fa-users text-blue-400 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="glass-card p-4 rounded-xl hover:shadow-2xl transition-all duration-300 glass-card-hover">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-400">Revenue</p>
+                                        <p class="text-2xl font-bold text-white">₹4.2L</p>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(139, 92, 246, 0.15) 100%); border: 1px solid rgba(139, 92, 246, 0.4)">
+                                        <i class="fas fa-rupee-sign text-purple-400 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campaign Cards Grid (Reduced Cards) -->
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="font-semibold text-white">Active Campaigns</h2>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 campaign-grid">
+                                <!-- Campaign Card 1 -->
+                                <div class="campaign-card glass-card rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 glass-card-hover">
+                                    <div class="p-5">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <div>
+                                                <div class="flex items-center space-x-2 mb-2">
+                                                    <span class="status-dot active-status"></span>
+                                                    <span class="text-sm font-medium text-green-400">Active</span>
+                                                </div>
+                                                <h3 class="font-bold text-white text-lg">Q4 SaaS Sales Drive</h3>
+                                                <p class="text-gray-400 text-sm mt-1">Enterprise SaaS companies</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Stats -->
+                                        <div class="grid grid-cols-3 gap-2 mb-4">
+                                            <div class="text-center p-2 rounded-lg hover:bg-white/5 transition-all duration-300" style="background-color: rgba(255, 255, 255, 0.05)">
+                                                <div class="font-bold text-white">248</div>
+                                                <div class="text-xs text-gray-400">Leads</div>
+                                            </div>
+                                            <div class="text-center p-2 rounded-lg hover:bg-white/5 transition-all duration-300" style="background-color: rgba(255, 255, 255, 0.05)">
+                                                <div class="font-bold text-white">127</div>
+                                                <div class="text-xs text-gray-400">Calls</div>
+                                            </div>
+                                            <div class="text-center p-2 rounded-lg hover:bg-white/5 transition-all duration-300" style="background-color: rgba(255, 255, 255, 0.05)">
+                                                <div class="font-bold text-white">₹85K</div>
+                                                <div class="text-xs text-gray-400">Revenue</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Actions -->
+                                        <div class="flex space-x-2">
+                                            <button class="flex-1 glass-button py-2 rounded-lg text-sm font-medium transform hover:-translate-y-0.5 transition-all duration-300">
+                                                View Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Campaign Card 2 -->
+                                <div class="campaign-card glass-card rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 glass-card-hover">
+                                    <div class="p-5">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <div>
+                                                <div class="flex items-center space-x-2 mb-2">
+                                                    <span class="status-dot active-status"></span>
+                                                    <span class="text-sm font-medium text-green-400">Active</span>
+                                                </div>
+                                                <h3 class="font-bold text-white text-lg">Enterprise Upsell</h3>
+                                                <p class="text-gray-400 text-sm mt-1">Existing customers</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Stats -->
+                                        <div class="grid grid-cols-3 gap-2 mb-4">
+                                            <div class="text-center p-2 rounded-lg hover:bg-white/5 transition-all duration-300" style="background-color: rgba(255, 255, 255, 0.05)">
+                                                <div class="font-bold text-white">156</div>
+                                                <div class="text-xs text-gray-400">Leads</div>
+                                            </div>
+                                            <div class="text-center p-2 rounded-lg hover:bg-white/5 transition-all duration-300" style="background-color: rgba(255, 255, 255, 0.05)">
+                                                <div class="font-bold text-white">89</div>
+                                                <div class="text-xs text-gray-400">Calls</div>
+                                            </div>
+                                            <div class="text-center p-2 rounded-lg hover:bg-white/5 transition-all duration-300" style="background-color: rgba(255, 255, 255, 0.05)">
+                                                <div class="font-bold text-white">₹1.2L</div>
+                                                <div class="text-xs text-gray-400">Revenue</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Actions -->
+                                        <div class="flex space-x-2">
+                                            <button class="flex-1 glass-button py-2 rounded-lg text-sm font-medium transform hover:-translate-y-0.5 transition-all duration-300">
+                                                View Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add New Campaign Card -->
+                        <div class="mb-6">
+                            <div class="campaign-card rounded-xl border-2 border-dashed border-gray-600 overflow-hidden hover:border-gray-500 transition-all duration-300 glass-card-hover" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px)">
+                                <div class="p-8 h-full flex flex-col items-center justify-center">
+                                    <div class="w-20 h-20 rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%); border: 1px solid rgba(255, 255, 255, 0.3)">
+                                        <i class="fas fa-plus text-gray-400 text-3xl"></i>
+                                    </div>
+                                    <h3 class="font-bold text-white text-xl mb-2">Create New Campaign</h3>
+                                    <p class="text-gray-400 text-center mb-6">Launch your AI sales team in minutes</p>
+                                    <button onclick="showCampaignModal()" class="glass-button px-8 py-3 rounded-lg font-medium transform hover:-translate-y-0.5 transition-all duration-300">
+                                        Start Campaign
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW Live Calls Page - From Image Design -->
+                <div id="live-calls-page" class="hidden-page page-transition">
+                    <div class="p-4 md:p-6">
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
+                            <div class="mb-4 md:mb-0">
+                                <h1 class="text-2xl md:text-3xl font-bold text-white">SalesForce</h1>
+                                <p class="text-gray-400 mt-1">Live Call Monitoring Dashboard</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <!-- Mobile Logout Button -->
+                                <button onclick="logout()" class="md:hidden flex items-center space-x-2 px-3 py-2 glass-button rounded-lg text-sm transform hover:-translate-y-0.5 transition-all duration-300">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </button>
+                                
+                                <div class="hidden md:flex items-center space-x-2 px-4 py-2 glass-card rounded-lg">
+                                    <i class="fas fa-user text-blue-400"></i>
+                                    <span>Admin</span>
+                                </div>
+                                <button class="glass-card px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Main Dashboard Grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Left Column: Live Agents -->
+                            <div class="lg:col-span-1 space-y-6">
+                                <!-- Live Agents Card -->
+                                <div class="glass-card p-6">
+                                    <h2 class="text-lg font-semibold text-white mb-4">Live Agents</h2>
+                                    
+                                    <!-- AI Agent 1 -->
+                                    <div class="glass-card p-4 mb-4 border border-green-500/20">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="status-dot active-status"></span>
+                                                    <h3 class="font-semibold text-white">AI Agent #1</h3>
+                                                </div>
+                                                <p class="text-sm text-gray-400 mt-1">On call: <span class="text-green-400 font-medium">04:32</span></p>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-gray-400">Confidence</div>
+                                                <div class="text-green-400 font-bold">85%</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <div class="text-sm text-gray-400">Talking to:</div>
+                                            <div class="font-medium text-white">Amit Patel</div>
+                                        </div>
+                                        
+                                        <div class="progress-container">
+                                            <div class="progress-bar-inner" style="width: 85%; background: linear-gradient(90deg, #10b981, #34d399)"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- AI Agent 2 -->
+                                    <div class="glass-card p-4 mb-4 border border-yellow-500/20">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="status-dot paused-status"></span>
+                                                    <h3 class="font-semibold text-white">AI Agent #2</h3>
+                                                </div>
+                                                <p class="text-sm text-gray-400 mt-1">On call: <span class="text-yellow-400 font-medium">02:15</span></p>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-gray-400">Confidence</div>
+                                                <div class="text-yellow-400 font-bold">65%</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <div class="text-sm text-gray-400">Talking to:</div>
+                                            <div class="font-medium text-white">Sneha Mehta</div>
+                                        </div>
+                                        
+                                        <div class="progress-container">
+                                            <div class="progress-bar-inner" style="width: 65%; background: linear-gradient(90deg, #f59e0b, #fbbf24)"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- AI Agent 3 -->
+                                    <div class="glass-card p-4 border border-gray-700">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="status-dot draft-status"></span>
+                                                    <h3 class="font-semibold text-white">AI Agent #3</h3>
+                                                </div>
+                                                <p class="text-sm text-green-400 font-medium mt-1">Available</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-4 text-center py-2 text-gray-400 text-sm">
+                                            <i class="fas fa-phone mr-2"></i>
+                                            Waiting for next call
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Quick Stats -->
+                                <div class="glass-card p-6">
+                                    <h2 class="text-lg font-semibold text-white mb-4">Today's Performance</h2>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="text-center p-3 glass-card rounded-lg">
+                                            <div class="text-2xl font-bold text-white">24</div>
+                                            <div class="text-sm text-gray-400">Calls Made</div>
+                                        </div>
+                                        
+                                        <div class="text-center p-3 glass-card rounded-lg">
+                                            <div class="text-2xl font-bold text-green-400">68%</div>
+                                            <div class="text-sm text-gray-400">Success Rate</div>
+                                        </div>
+                                        
+                                        <div class="text-center p-3 glass-card rounded-lg">
+                                            <div class="text-2xl font-bold text-white">₹42K</div>
+                                            <div class="text-sm text-gray-400">Revenue</div>
+                                        </div>
+                                        
+                                        <div class="text-center p-3 glass-card rounded-lg">
+                                            <div class="text-2xl font-bold text-white">3:24</div>
+                                            <div class="text-sm text-gray-400">Avg. Duration</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Middle Column: Live Calls Dashboard -->
+                            <div class="lg:col-span-2 space-y-6">
+                                <!-- Live Calls Dashboard Card -->
+                                <div class="glass-card p-6">
+                                    <div class="flex justify-between items-center mb-6">
+                                        <h2 class="text-lg font-semibold text-white">Live Calls Dashboard</h2>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="status-dot active-status pulse-ring"></span>
+                                            <span class="text-sm text-green-400">Real-time monitoring</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-400 mb-6">Real-time monitoring of AI sales calls</p>
+                                    
+                                    <!-- Current Call Display -->
+                                    <div class="glass-card p-6 border border-blue-500/30">
+                                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                                            <div>
+                                                <h3 class="text-xl font-bold text-white">Amit Patel</h3>
+                                                <div class="flex items-center space-x-2 mt-1">
+                                                    <span class="text-gray-400">TechCorp Solutions</span>
+                                                    <span class="status-badge status-warning">Hot Lead</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mt-4 md:mt-0">
+                                                <div class="text-center">
+                                                    <div class="text-sm text-gray-400 mb-1">Call duration</div>
+                                                    <div class="font-bold text-green-400 text-2xl">10:03</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Call Progress -->
+                                        <div class="mt-6">
+                                            <div class="flex justify-between text-sm text-gray-400 mb-2">
+                                                <span>Call Progress</span>
+                                                <span>65%</span>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar-inner" style="width: 65%; background: linear-gradient(90deg, #3b82f6, #60a5fa)"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Call Controls -->
+                                    <div class="flex space-x-3 mt-6">
+                                        <button class="flex-1 glass-button py-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                                            <i class="fas fa-microphone text-green-400 mr-2"></i>
+                                            <span>Join Call</span>
+                                        </button>
+                                        <button class="flex-1 glass-button py-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                                            <i class="fas fa-volume-up text-blue-400 mr-2"></i>
+                                            <span>Listen</span>
+                                        </button>
+                                        <button class="flex-1 glass-button py-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                                            <i class="fas fa-comment text-yellow-400 mr-2"></i>
+                                            <span>Whisper</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Two Column Layout for Transcript and Insights -->
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Live Transcript Card -->
+                                    <div class="glass-card p-6">
+                                        <h2 class="text-lg font-semibold text-white mb-4">Live Transcript</h2>
+                                        
+                                        <div class="space-y-4 max-h-80 overflow-y-auto scrollbar-thin p-2">
+                                            <!-- AI Message -->
+                                            <div class="glass-card p-4">
+                                                <div class="flex justify-between items-start mb-2">
+                                                    <span class="font-medium text-white">AI Agent</span>
+                                                    <span class="text-xs text-gray-400">03:40</span>
+                                                </div>
+                                                <p class="text-white">Would you like to see a demo?</p>
+                                            </div>
+                                            
+                                            <!-- Client Message -->
+                                            <div class="p-4 rounded-lg" style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3)">
+                                                <div class="flex justify-between items-start mb-2">
+                                                    <span class="font-medium text-white">Client</span>
+                                                    <span class="text-xs text-gray-400">03:45</span>
+                                                </div>
+                                                <p class="text-white">A demo would be great. What's the pricing like? Our budget is around ₹20,000 per month.</p>
+                                            </div>
+                                            
+                                            <!-- AI Response -->
+                                            <div class="glass-card p-4">
+                                                <div class="flex justify-between items-start mb-2">
+                                                    <span class="font-medium text-white">AI Agent</span>
+                                                    <span class="text-xs text-gray-400">03:47</span>
+                                                </div>
+                                                <p class="text-white">Perfect! Our premium plan starts at ₹25,000 but I can offer you an introductory price of ₹18,000 for the first 3 months. Would you like me to schedule the demo?</p>
+                                            </div>
+                                            
+                                            <!-- Typing Indicator -->
+                                            <div class="flex items-center space-x-2 text-gray-400 text-sm">
+                                                <div class="flex space-x-1">
+                                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                                                </div>
+                                                <span>Client is typing...</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Message Input -->
+                                        <div class="mt-6">
+                                            <div class="flex space-x-2">
+                                                <input type="text" 
+                                                       placeholder="Type a message to whisper to AI agent..." 
+                                                       class="flex-1 glass-input px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <button class="glass-button px-4 py-3 rounded-lg hover:bg-white/5 transition-colors">
+                                                    <i class="fas fa-paper-plane text-blue-400"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Live Insights Card -->
+                                    <div class="glass-card p-6">
+                                        <h2 class="text-lg font-semibold text-white mb-4">Live Insights</h2>
+                                        
+                                        <!-- Lead Information -->
+                                        <div class="mb-6">
+                                            <h3 class="font-medium text-white mb-3">Lead Information</h3>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <div class="text-sm text-gray-400">Company</div>
+                                                    <div class="font-medium text-white">TechCorp Solutions</div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm text-gray-400">Industry</div>
+                                                    <div class="font-medium text-white">SaaS / Enterprise</div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm text-gray-400">Lead Source</div>
+                                                    <div class="font-medium text-white">Website Form</div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm text-gray-400">Status</div>
+                                                    <div class="font-medium text-green-400">New Lead</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Previous Interactions -->
+                                        <div class="mb-6">
+                                            <h3 class="font-medium text-white mb-3">Previous Interactions</h3>
+                                            <div class="space-y-2">
+                                                <div class="flex justify-between items-center text-sm">
+                                                    <span class="text-gray-400">Email sent:</span>
+                                                    <span class="text-white">2 days ago</span>
+                                                </div>
+                                                <div class="flex justify-between items-center text-sm">
+                                                    <span class="text-gray-400">1 previous call:</span>
+                                                    <span class="text-white">5 min</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Quick Actions -->
+                                        <div>
+                                            <h3 class="font-medium text-white mb-3">Quick Actions</h3>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <button class="glass-card p-3 flex flex-col items-center justify-center hover:bg-white/5 transition-all duration-300">
+                                                    <i class="fas fa-calendar text-blue-400 text-lg mb-2"></i>
+                                                    <span class="text-sm">Schedule</span>
+                                                </button>
+                                                <button class="glass-card p-3 flex flex-col items-center justify-center hover:bg-white/5 transition-all duration-300">
+                                                    <i class="fas fa-file-invoice-dollar text-green-400 text-lg mb-2"></i>
+                                                    <span class="text-sm">Send Quote</span>
+                                                </button>
+                                                <button class="glass-card p-3 flex flex-col items-center justify-center hover:bg-white/5 transition-all duration-300">
+                                                    <i class="fas fa-tag text-purple-400 text-lg mb-2"></i>
+                                                    <span class="text-sm">Add Tag</span>
+                                                </button>
+                                                <button class="glass-card p-3 flex flex-col items-center justify-center hover:bg-white/5 transition-all duration-300">
+                                                    <i class="fas fa-edit text-yellow-400 text-lg mb-2"></i>
+                                                    <span class="text-sm">Notes</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Confidence Score -->
+                                        <div class="mt-6 pt-6 border-t" style="border-color: rgba(255, 255, 255, 0.15)">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <div class="text-sm text-gray-400">Deal Confidence</div>
+                                                    <div class="text-xl font-bold text-green-400">78%</div>
+                                                </div>
+                                                <div class="relative w-16 h-16">
+                                                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                                                        <circle cx="50" cy="50" r="45" fill="none" stroke="#374151" stroke-width="10"/>
+                                                        <circle cx="50" cy="50" r="45" fill="none" stroke="#10b981" stroke-width="10" 
+                                                                stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="62.34"/>
+                                                        <text x="50" y="55" text-anchor="middle" fill="#10b981" font-size="20" font-weight="bold">78%</text>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="mt-8 pt-6 border-t border-gray-800 text-center text-gray-500 text-sm">
+                            <p>SalesForce AI Call Monitoring System • All calls are recorded for quality assurance • Last updated: Today, 03:45 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Campaign Modal with Fixed Steps -->
+    <div id="campaignModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="glass-modal rounded-xl max-w-2xl w-full animate-slide-up">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-white">Create New Campaign</h2>
+                    <button onclick="closeCampaignModal()" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Campaign Creation Steps -->
+                <div class="flex mb-6">
+                    <div class="flex-1">
+                        <button onclick="goToStep(1)" class="w-full text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-white text-gray-900 flex items-center justify-center font-bold shadow-lg transition-all duration-300 hover:scale-110" id="step1-indicator">1</div>
+                                <div class="ml-3">
+                                    <div class="text-sm font-medium text-white" id="step1-text">Basic Info</div>
+                                    <div class="text-xs text-gray-400">Name your campaign</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="flex-1">
+                        <button onclick="goToStep(2)" class="w-full text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300 hover:scale-110" id="step2-indicator" style="background-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7)">2</div>
+                                <div class="ml-3">
+                                    <div class="text-sm text-gray-400" id="step2-text">Upload Leads</div>
+                                    <div class="text-xs text-gray-500">Add your contact list</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="flex-1">
+                        <button onclick="goToStep(3)" class="w-full text-left">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300 hover:scale-110" id="step3-indicator" style="background-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7)">3</div>
+                                <div class="ml-3">
+                                    <div class="text-sm text-gray-400" id="step3-text">Configure</div>
+                                    <div class="text-xs text-gray-500">Set up AI behavior</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step Content Container -->
+                <div id="step-content-container">
+                    <!-- Step content will be dynamically inserted here -->
+                </div>
+
+                <!-- Step Navigation Buttons -->
+                <div class="pt-6 border-t" style="border-color: rgba(255, 255, 255, 0.1)" id="step-navigation">
+                    <div class="flex justify-between">
+                        <button onclick="previousStep()" class="px-6 py-3 glass-input rounded-lg text-white hover:bg-white/20 transition-all duration-300 hidden" id="prev-button">
+                            Previous
+                        </button>
+                        <div class="flex-1"></div>
+                        <button onclick="nextStep()" class="px-6 py-3 glass-button rounded-lg transform hover:-translate-y-0.5 transition-all duration-300" id="next-button">
+                            Next: Upload Leads
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Mobile Bottom Navigation -->
+    <div id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 hidden" style="background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(17, 24, 39, 0.9) 100%); backdrop-filter: blur(15px); border-top: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2)">
+        <div class="flex justify-around py-3">
+            <a href="#" onclick="showPage('campaigns')" class="flex flex-col items-center text-white">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-1" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%); border: 1px solid rgba(59, 130, 246, 0.4)">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <span class="text-xs">Campaigns</span>
+            </a>
+            <button onclick="showCampaignModal()" class="flex flex-col items-center text-gray-400 -mt-6">
+                <div class="w-14 h-14 glass-button rounded-full flex items-center justify-center mb-1 shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                    <i class="fas fa-plus text-white text-lg"></i>
+                </div>
+                <span class="text-xs">New</span>
+            </button>
+            <a href="#" onclick="showPage('live-calls')" class="flex flex-col items-center text-gray-400 hover:text-white transition-colors">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-1" style="background: rgba(255, 255, 255, 0.1)">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <span class="text-xs">Live Calls</span>
+            </a>
+            <a href="#" onclick="logout()" class="flex flex-col items-center text-gray-400 hover:text-white transition-colors">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-1" style="background: rgba(255, 255, 255, 0.1)">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <span class="text-xs">Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Current step in campaign creation
+        let currentStep = 1;
+        
+        // Form data storage
+        const campaignFormData = {
+            basicInfo: {},
+            leads: null,
+            configuration: {}
+        };
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Demo credentials
+            const demoEmail = 'admin@example.com';
+            const demoPassword = 'password123';
+            
+            if (email === demoEmail && password === demoPassword) {
+                // Successful login
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                // Hide login page and show main app
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('mobile-nav').classList.remove('hidden');
+                
+                // Show success message
+                showToast('Login successful! Welcome back.', 'success');
+                
+                // Initialize campaigns as default
+                showPage('campaigns');
+            } else {
+                // Failed login
+                showToast('Invalid email or password. Please try again.', 'error');
+            }
+        });
+
+        // Check if user is already logged in (for page refresh)
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                // User is logged in, show main app
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('mobile-nav').classList.remove('hidden');
+                
+                // Initialize campaigns as default
+                showPage('campaigns');
+            } else {
+                // User is not logged in, show login page
+                document.getElementById('login-page').style.display = 'flex';
+                document.getElementById('main-app').classList.add('hidden');
+                document.getElementById('mobile-nav').classList.add('hidden');
+            }
+        });
+
+        // Logout functionality
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('isLoggedIn');
+                
+                // Hide main app and show login page
+                document.getElementById('main-app').classList.add('hidden');
+                document.getElementById('mobile-nav').classList.add('hidden');
+                document.getElementById('login-page').style.display = 'flex';
+                
+                // Reset login form
+                document.getElementById('loginForm').reset();
+                
+                // Close user menu if open
+                const userMenu = document.getElementById('userMenu');
+                if (userMenu) userMenu.classList.add('hidden');
+                
+                showToast('You have been logged out successfully.', 'info');
+            }
+        }
+
+        // Toggle user menu
+        function toggleUserMenu() {
+            const userMenu = document.getElementById('userMenu');
+            userMenu.classList.toggle('hidden');
+        }
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.getElementById('userMenu');
+            const userProfile = document.querySelector('.flex.items-center.space-x-3');
+            
+            if (userProfile && userMenu && !userProfile.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            // Remove existing toast if any
+            const existingToast = document.getElementById('toast-notification');
+            if (existingToast) existingToast.remove();
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.id = 'toast-notification';
+            toast.className = `fixed top-4 right-4 glass-card p-4 rounded-lg shadow-xl z-50 animate-slide-up`;
+            
+            let icon = 'fa-info-circle';
+            let bgColor = 'bg-blue-500/20';
+            let borderColor = 'border-blue-500/30';
+            
+            if (type === 'success') {
+                icon = 'fa-check-circle';
+                bgColor = 'bg-green-500/20';
+                borderColor = 'border-green-500/30';
+            } else if (type === 'error') {
+                icon = 'fa-exclamation-circle';
+                bgColor = 'bg-red-500/20';
+                borderColor = 'border-red-500/30';
+            } else if (type === 'warning') {
+                icon = 'fa-exclamation-triangle';
+                bgColor = 'bg-yellow-500/20';
+                borderColor = 'border-yellow-500/30';
+            }
+            
+            toast.innerHTML = `
+                <div class="flex items-center">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center mr-3 ${bgColor} border ${borderColor}">
+                        <i class="fas ${icon} ${type === 'success' ? 'text-green-400' : type === 'error' ? 'text-red-400' : type === 'warning' ? 'text-yellow-400' : 'text-blue-400'} text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white font-semibold">${message}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // Page navigation functionality
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('[id$="-page"]').forEach(page => {
+                page.classList.remove('active-page');
+                page.classList.add('hidden-page');
+            });
+            
+            // Remove active class from all sidebar links
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                link.classList.remove('bg-white/10');
+            });
+            
+            // Add active class to clicked link
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+                event.currentTarget.classList.add('bg-white/10');
+            }
+            
+            // Show selected page
+            const pageElement = document.getElementById(pageId + '-page');
+            if (pageElement) {
+                pageElement.classList.remove('hidden-page');
+                pageElement.classList.add('active-page');
+            }
+            
+            // Update mobile navigation
+            updateMobileNav(pageId);
+        }
+        
+        function updateMobileNav(pageId) {
+            // Update mobile nav active state
+            const mobileLinks = document.querySelectorAll('#mobile-nav a');
+            mobileLinks.forEach(link => {
+                link.classList.remove('text-white');
+                link.classList.add('text-gray-400');
+                const iconDiv = link.querySelector('div');
+                if (iconDiv) {
+                    iconDiv.style.background = 'rgba(255, 255, 255, 0.1)';
+                    iconDiv.style.border = 'none';
+                }
+            });
+            
+            // Find and activate current page link
+            const activeLink = Array.from(mobileLinks).find(link => {
+                return link.getAttribute('onclick')?.includes(pageId);
+            });
+            
+            if (activeLink) {
+                activeLink.classList.remove('text-gray-400');
+                activeLink.classList.add('text-white');
+                const iconDiv = activeLink.querySelector('div');
+                if (iconDiv) {
+                    iconDiv.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%)';
+                    iconDiv.style.border = '1px solid rgba(59, 130, 246, 0.4)';
+                }
+            }
+        }
+
+        // Campaign Modal Functions
+        function showCampaignModal() {
+            currentStep = 1;
+            document.getElementById('campaignModal').classList.remove('hidden');
+            document.getElementById('campaignModal').classList.add('flex');
+            goToStep(1);
+        }
+
+        function closeCampaignModal() {
+            document.getElementById('campaignModal').classList.add('hidden');
+            document.getElementById('campaignModal').classList.remove('flex');
+            // Reset form data
+            Object.keys(campaignFormData).forEach(key => {
+                if (typeof campaignFormData[key] === 'object') {
+                    campaignFormData[key] = {};
+                } else {
+                    campaignFormData[key] = null;
+                }
+            });
+        }
+
+        function goToStep(stepNumber) {
+            currentStep = stepNumber;
+            
+            // Update step indicators
+            for (let i = 1; i <= 3; i++) {
+                const indicator = document.getElementById(`step${i}-indicator`);
+                const text = document.getElementById(`step${i}-text`);
+                
+                if (i === stepNumber) {
+                    // Active step
+                    indicator.style.background = '#ffffff';
+                    indicator.style.color = '#111827';
+                    text.classList.remove('text-gray-400');
+                    text.classList.add('font-medium', 'text-white');
+                } else {
+                    // Inactive step
+                    indicator.style.background = 'rgba(255, 255, 255, 0.1)';
+                    indicator.style.color = 'rgba(255, 255, 255, 0.7)';
+                    text.classList.remove('font-medium', 'text-white');
+                    text.classList.add('text-gray-400');
+                }
+            }
+            
+            // Show step content
+            updateStepContent(stepNumber);
+            
+            // Update navigation buttons
+            updateStepNavigation(stepNumber);
+        }
+
+        function updateStepNavigation(stepNumber) {
+            const prevButton = document.getElementById('prev-button');
+            const nextButton = document.getElementById('next-button');
+            
+            // Show/hide previous button
+            if (stepNumber > 1) {
+                prevButton.classList.remove('hidden');
+            } else {
+                prevButton.classList.add('hidden');
+            }
+            
+            // Update next button text
+            if (stepNumber === 1) {
+                nextButton.textContent = 'Next: Upload Leads';
+            } else if (stepNumber === 2) {
+                nextButton.textContent = 'Next: Configure AI';
+            } else if (stepNumber === 3) {
+                nextButton.textContent = 'Create Campaign';
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < 3) {
+                goToStep(currentStep + 1);
+            } else if (currentStep === 3) {
+                createCampaign();
+            }
+        }
+
+        function updateStepContent(stepNumber) {
+            const container = document.getElementById('step-content-container');
+            
+            switch(stepNumber) {
+                case 1:
+                    // Step 1: Basic Info
+                    container.innerHTML = `
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Campaign Name</label>
+                                <input type="text" 
+                                       id="campaign-name"
+                                       placeholder="e.g., Q4 Enterprise Sales" 
+                                       class="w-full px-4 py-3 glass-input rounded-lg focus:outline-none transition-all duration-300"
+                                       value="${campaignFormData.basicInfo.name || ''}">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Campaign Type</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button type="button" onclick="selectCampaignType('cold-call')" class="p-4 glass-input rounded-lg text-center hover:border-blue-500 transition-all duration-300 ${campaignFormData.basicInfo.type === 'cold-call' ? 'border-blue-500' : ''}">
+                                        <i class="fas fa-phone-alt text-gray-400 mb-2 text-lg"></i>
+                                        <div class="font-medium text-white">Cold Call</div>
+                                    </button>
+                                    <button type="button" onclick="selectCampaignType('follow-up')" class="p-4 glass-input rounded-lg text-center hover:border-blue-500 transition-all duration-300 ${campaignFormData.basicInfo.type === 'follow-up' ? 'border-blue-500' : ''}">
+                                        <i class="fas fa-sync-alt text-gray-400 mb-2 text-lg"></i>
+                                        <div class="font-medium text-white">Follow-up</div>
+                                    </button>
+                                    <button type="button" onclick="selectCampaignType('upsell')" class="p-4 rounded-lg text-center transition-all duration-300 ${campaignFormData.basicInfo.type === 'upsell' ? 'border-blue-500' : 'glass-input'} ${campaignFormData.basicInfo.type === 'upsell' ? 'transform -translate-y-1' : ''}" style="${campaignFormData.basicInfo.type === 'upsell' ? 'background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%); border: 1px solid rgba(59, 130, 246, 0.5)' : ''}">
+                                        <i class="fas fa-chart-line ${campaignFormData.basicInfo.type === 'upsell' ? 'text-blue-400' : 'text-gray-400'} mb-2 text-lg"></i>
+                                        <div class="font-medium text-white">Upsell</div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">AI Agent Package</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="${campaignFormData.basicInfo.package === 'basic' ? 'border-blue-500 transform -translate-y-1' : 'glass-input'} rounded-lg p-4 hover:border-blue-500 cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-1" onclick="selectPackage('basic')" style="${campaignFormData.basicInfo.package === 'basic' ? 'background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%); border: 1px solid rgba(59, 130, 246, 0.5)' : ''}">
+                                        <div class="font-bold text-white text-lg mb-1">🥬 Beet</div>
+                                        <div class="text-sm text-gray-400 mb-2">Basic calling</div>
+                                        <div class="font-bold text-white">₹5,000/mo</div>
+                                    </div>
+                                    <div class="${campaignFormData.basicInfo.package === 'standard' ? 'border-blue-500 transform -translate-y-1' : ''} rounded-lg p-4 cursor-pointer transition-all duration-300 ${campaignFormData.basicInfo.package === 'standard' ? '' : 'hover:transform hover:-translate-y-1'}" onclick="selectPackage('standard')" style="${campaignFormData.basicInfo.package === 'standard' ? 'background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%); border: 1px solid rgba(59, 130, 246, 0.5)' : 'background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%); border: 1px solid rgba(255, 255, 255, 0.2)'}">
+                                        <div class="font-bold text-white text-lg mb-1">🥗 Salad</div>
+                                        <div class="text-sm text-gray-400 mb-2">Call + WhatsApp</div>
+                                        <div class="font-bold text-white">₹10,000/mo</div>
+                                    </div>
+                                    <div class="${campaignFormData.basicInfo.package === 'premium' ? 'border-blue-500 transform -translate-y-1' : 'glass-input'} rounded-lg p-4 hover:border-blue-500 cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-1" onclick="selectPackage('premium')" style="${campaignFormData.basicInfo.package === 'premium' ? 'background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%); border: 1px solid rgba(59, 130, 246, 0.5)' : ''}">
+                                        <div class="font-bold text-white text-lg mb-1">💪 Protein</div>
+                                        <div class="text-sm text-gray-400 mb-2">Full sales suite</div>
+                                        <div class="font-bold text-white">₹20,000/mo</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 2:
+                    // Step 2: Upload Leads
+                    container.innerHTML = `
+                        <div class="space-y-6">
+                            <div class="text-center py-4">
+                                <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%); border: 1px solid rgba(59, 130, 246, 0.5)">
+                                    <i class="fas fa-cloud-upload-alt text-blue-400 text-2xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-2">Upload Your Leads</h3>
+                                <p class="text-gray-400 mb-6">Upload a CSV or Excel file with your contact list</p>
+                                
+                                <div class="glass-card p-8 rounded-xl border-2 border-dashed border-gray-600 hover:border-blue-500 transition-all duration-300 mb-6" id="upload-area">
+                                    <input type="file" id="leadsFile" class="hidden" accept=".csv,.xlsx,.xls" onchange="handleFileUpload(event)">
+                                    <label for="leadsFile" class="cursor-pointer flex flex-col items-center">
+                                        <i class="fas fa-file-upload text-4xl text-gray-400 mb-4"></i>
+                                        <div class="font-medium text-white mb-2">Click to browse or drag & drop</div>
+                                        <div class="text-sm text-gray-400">CSV, XLSX up to 10MB</div>
+                                        ${campaignFormData.leads ? `<div class="mt-4 text-green-400 text-sm"><i class="fas fa-check-circle mr-2"></i>File uploaded: ${campaignFormData.leads.name}</div>` : ''}
+                                    </label>
+                                </div>
+                                
+                                <div class="text-left">
+                                    <h4 class="font-medium text-white mb-3">File Requirements:</h4>
+                                    <ul class="text-sm text-gray-400 space-y-2">
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                            Required columns: Name, Phone, Email
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                            Maximum file size: 10MB
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                            Supported formats: CSV, XLSX, XLS
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                            Maximum 10,000 contacts per file
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add drag and drop functionality
+                    setTimeout(() => {
+                        const uploadArea = document.getElementById('upload-area');
+                        if (uploadArea) {
+                            uploadArea.addEventListener('dragover', (e) => {
+                                e.preventDefault();
+                                uploadArea.classList.add('border-blue-500');
+                            });
+                            
+                            uploadArea.addEventListener('dragleave', () => {
+                                uploadArea.classList.remove('border-blue-500');
+                            });
+                            
+                            uploadArea.addEventListener('drop', (e) => {
+                                e.preventDefault();
+                                uploadArea.classList.remove('border-blue-500');
+                                const file = e.dataTransfer.files[0];
+                                if (file) {
+                                    handleFileUpload({ target: { files: [file] } });
+                                }
+                            });
+                        }
+                    }, 100);
+                    break;
+                    
+                case 3:
+                    // Step 3: Configure AI
+                    container.innerHTML = `
+                        <div class="space-y-6">
+                            <h3 class="font-bold text-white mb-4">Configure AI Behavior</h3>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">AI Voice</label>
+                                    <select id="ai-voice" class="w-full px-4 py-3 glass-input rounded-lg focus:outline-none transition-all duration-300">
+                                        <option value="male-english" ${campaignFormData.configuration.voice === 'male-english' ? 'selected' : ''}>Professional Male (English)</option>
+                                        <option value="female-english" ${campaignFormData.configuration.voice === 'female-english' ? 'selected' : ''}>Friendly Female (English)</option>
+                                        <option value="female-hindi" ${campaignFormData.configuration.voice === 'female-hindi' ? 'selected' : ''}>Professional Female (Hindi)</option>
+                                        <option value="male-hindi" ${campaignFormData.configuration.voice === 'male-hindi' ? 'selected' : ''}>Friendly Male (Hindi)</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Calling Hours</label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <select id="start-time" class="px-4 py-3 glass-input rounded-lg focus:outline-none transition-all duration-300">
+                                            <option value="9" ${campaignFormData.configuration.startTime === '9' ? 'selected' : ''}>9:00 AM</option>
+                                            <option value="10" ${campaignFormData.configuration.startTime === '10' ? 'selected' : ''}>10:00 AM</option>
+                                            <option value="11" ${campaignFormData.configuration.startTime === '11' ? 'selected' : ''}>11:00 AM</option>
+                                            <option value="12" ${campaignFormData.configuration.startTime === '12' ? 'selected' : ''}>12:00 PM</option>
+                                        </select>
+                                        <select id="end-time" class="px-4 py-3 glass-input rounded-lg focus:outline-none transition-all duration-300">
+                                            <option value="17" ${campaignFormData.configuration.endTime === '17' ? 'selected' : ''}>5:00 PM</option>
+                                            <option value="18" ${campaignFormData.configuration.endTime === '18' ? 'selected' : ''}>6:00 PM</option>
+                                            <option value="19" ${campaignFormData.configuration.endTime === '19' ? 'selected' : ''}>7:00 PM</option>
+                                            <option value="20" ${campaignFormData.configuration.endTime === '20' ? 'selected' : ''}>8:00 PM</option>
+                                        </select>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-2">Calls will only be made between these hours</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Call Attempts</label>
+                                    <div class="flex items-center space-x-4">
+                                        <span class="text-sm text-gray-400">Minimum</span>
+                                        <input type="range" id="call-attempts" min="1" max="5" value="${campaignFormData.configuration.attempts || 2}" class="flex-1" oninput="updateAttemptsValue(this.value)">
+                                        <span class="text-sm text-gray-400">Maximum</span>
+                                        <span id="attempts-value" class="text-white font-bold">${campaignFormData.configuration.attempts || 2}</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-2">AI will attempt calls <span id="attempts-text">${campaignFormData.configuration.attempts || 2}</span> times before marking as unreachable</p>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <h4 class="font-medium text-white">Advanced Settings</h4>
+                                    <div class="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                                        <div>
+                                            <div class="font-medium text-white">Enable sentiment analysis</div>
+                                            <div class="text-sm text-gray-400">Analyze caller emotions during conversations</div>
+                                        </div>
+                                        <input type="checkbox" id="sentiment-analysis" class="rounded glass-input" ${campaignFormData.configuration.sentimentAnalysis ? 'checked' : ''}>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                                        <div>
+                                            <div class="font-medium text-white">Automatic follow-ups</div>
+                                            <div class="text-sm text-gray-400">Schedule follow-up calls automatically</div>
+                                        </div>
+                                        <input type="checkbox" id="auto-followup" class="rounded glass-input" ${campaignFormData.configuration.autoFollowup ? 'checked' : ''}>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        // Helper functions for step 1 selections
+        function selectCampaignType(type) {
+            campaignFormData.basicInfo.type = type;
+            goToStep(1); // Refresh the view to update UI
+            showToast(`Selected ${type.replace('-', ' ')} campaign type`, 'info');
+        }
+
+        function selectPackage(packageType) {
+            campaignFormData.basicInfo.package = packageType;
+            goToStep(1); // Refresh the view to update UI
+            showToast(`Selected ${packageType} package`, 'info');
+        }
+
+        // File upload handler
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Validate file type
+                const validTypes = ['.csv', '.xlsx', '.xls'];
+                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                
+                if (!validTypes.includes(fileExtension)) {
+                    showToast('Invalid file type. Please upload CSV or Excel files.', 'error');
+                    return;
+                }
+                
+                // Validate file size (10MB max)
+                if (file.size > 10 * 1024 * 1024) {
+                    showToast('File size exceeds 10MB limit.', 'error');
+                    return;
+                }
+                
+                campaignFormData.leads = {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                };
+                
+                goToStep(2); // Refresh the view to show uploaded file
+                showToast(`File "${file.name}" uploaded successfully`, 'success');
+            }
+        }
+
+        // Update attempts value display
+        function updateAttemptsValue(value) {
+            document.getElementById('attempts-value').textContent = value;
+            document.getElementById('attempts-text').textContent = value;
+            campaignFormData.configuration.attempts = parseInt(value);
+        }
+
+        // Create campaign final step
+        function createCampaign() {
+            // Gather all form data
+            const campaignName = document.getElementById('campaign-name')?.value;
+            const aiVoice = document.getElementById('ai-voice')?.value;
+            const startTime = document.getElementById('start-time')?.value;
+            const endTime = document.getElementById('end-time')?.value;
+            const sentimentAnalysis = document.getElementById('sentiment-analysis')?.checked;
+            const autoFollowup = document.getElementById('auto-followup')?.checked;
+            
+            // Validate required fields
+            if (!campaignName) {
+                showToast('Please enter a campaign name', 'error');
+                goToStep(1);
+                return;
+            }
+            
+            if (!campaignFormData.basicInfo.type) {
+                showToast('Please select a campaign type', 'error');
+                goToStep(1);
+                return;
+            }
+            
+            if (!campaignFormData.basicInfo.package) {
+                showToast('Please select an AI agent package', 'error');
+                goToStep(1);
+                return;
+            }
+            
+            if (!campaignFormData.leads) {
+                showToast('Please upload a leads file', 'error');
+                goToStep(2);
+                return;
+            }
+            
+            // Save configuration
+            campaignFormData.configuration = {
+                voice: aiVoice,
+                startTime: startTime,
+                endTime: endTime,
+                attempts: campaignFormData.configuration.attempts || 2,
+                sentimentAnalysis: sentimentAnalysis,
+                autoFollowup: autoFollowup
+            };
+            
+            // Show success message
+            showToast('Campaign created successfully!', 'success');
+            
+            // Close modal
+            closeCampaignModal();
+            
+            // Show campaigns page
+            showPage('campaigns');
+            
+            // In a real app, you would send the data to your backend here
+            console.log('Campaign created:', {
+                name: campaignName,
+                ...campaignFormData
+            });
+        }
+
+        // Modal close on ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeCampaignModal();
+            }
+        });
+
+        // Click outside to close modals
+        document.querySelectorAll('.fixed.inset-0').forEach(modal => {
+            modal.addEventListener('click', function(event) {
+                if (event.target === this) {
+                    this.classList.add('hidden');
+                    this.classList.remove('flex');
+                }
+            });
+        });
+
+        // Live Calls Page Timer Simulation
+        function updateTimer() {
+            const timerElement = document.querySelector('.text-green-400.text-2xl.font-bold');
+            if (timerElement && document.getElementById('live-calls-page').classList.contains('active-page')) {
+                const currentTime = timerElement.textContent.split(':');
+                let minutes = parseInt(currentTime[0]);
+                let seconds = parseInt(currentTime[1]);
+                
+                seconds++;
+                if (seconds >= 60) {
+                    minutes++;
+                    seconds = 0;
+                }
+                
+                timerElement.textContent = 
+                    minutes.toString().padStart(2, '0') + ':' + 
+                    seconds.toString().padStart(2, '0');
+            }
+        }
+        
+        // Update timer every second when on live calls page
+        setInterval(updateTimer, 1000);
+
+        // Typing simulation for live calls page
+        let typingTimeout;
+        function simulateTyping() {
+            if (document.getElementById('live-calls-page').classList.contains('active-page')) {
+                const typingIndicator = document.querySelector('.text-gray-400.text-sm');
+                if (typingIndicator && !typingIndicator.querySelector('.text-green-400')) {
+                    clearTimeout(typingTimeout);
+                    
+                    typingIndicator.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <div class="flex space-x-1">
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                            </div>
+                            <span>Client sent a message</span>
+                        </div>
+                    `;
+                    
+                    // Add new message after typing
+                    typingTimeout = setTimeout(() => {
+                        const transcriptContainer = document.querySelector('.space-y-4.max-h-80');
+                        if (transcriptContainer) {
+                            const newMessage = document.createElement('div');
+                            newMessage.className = 'p-4 rounded-lg';
+                            newMessage.style.background = 'rgba(59, 130, 246, 0.15)';
+                            newMessage.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+                            newMessage.innerHTML = `
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="font-medium text-white">Client</span>
+                                    <span class="text-xs text-gray-400">03:48</span>
+                                </div>
+                                <p class="text-white">Yes, please schedule the demo for tomorrow afternoon. What time works best?</p>
+                            `;
+                            transcriptContainer.appendChild(newMessage);
+                            transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
+                            
+                            // Remove typing indicator
+                            typingIndicator.remove();
+                        }
+                    }, 1500);
+                }
+            }
+        }
+
+        // Simulate typing after 3 seconds when on live calls page
+        setTimeout(simulateTyping, 3000);
+    </script>
+</body>
+</html>
